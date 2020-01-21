@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,14 +23,26 @@ public class PlayerController : MonoBehaviour
     private float xRounded = 0;
     private float zRounded = 0;
 
+    //Store a reference to the UI Text component which will display the number of pickups collected.
+    public Text scoreText;
+
+    //Integer to store the score so far.
+    public static int score;
+
     void Start()
     {
-        
+        //Start with 0 points
+        score = 0; 
+
+        //Call our SetCountText function which will update the text with the current value for count.
+        SetScoreText();
     }
 
     void Update()
     {
         playerEngine();
+        // Set the displayed text to be the word "Score" followed by the score value.
+        scoreText.text = "Score: " + score;
     }
 
     void playerEngine()
@@ -114,5 +127,35 @@ public class PlayerController : MonoBehaviour
         zLog = z;
 
         Debug.Log(xRounded);
+    }
+
+    // -- INTERACTION AND SCORING --
+
+    //This lets us interact with other objects
+    //1. Put a collider on the player
+    //2. Put a collider on what you want to interact with
+    //3. Set collider on interactable object to "IS TRIGGER"
+    private void OnTriggerEnter(Collider other)
+    {
+        //Check the provided Collider2D parameter other to see if it is tagged "PickUp", if it is...
+        if (other.gameObject.CompareTag("PickUp"))
+        {
+            //... then set the other object we just collided with to inactive.
+            other.gameObject.SetActive(false);
+
+            //Add one to the current value of our count variable.
+            score = score + 100;
+            SetScoreText();
+        }
+
+        //TODO have specific behavior for specific objects/enemies
+    }
+
+    //Increase the player's score.
+    void SetScoreText()
+    {
+        //TODO add different points depending on what was hit
+        // Set the displayed text to be the word "Score" followed by the score value.
+        scoreText.text = "Score: " + score.ToString();
     }
 }
